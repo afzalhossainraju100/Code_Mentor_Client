@@ -28,7 +28,12 @@ export async function apiFetch<T>(path: string, { method = 'GET', body }: Reques
       body: body === undefined ? undefined : JSON.stringify(body),
     })
   } catch {
-    throw new ApiError(0, 'Cannot reach the Code Mentor server. Make sure it is running, then try again.')
+    throw new ApiError(
+      0,
+      import.meta.env.DEV
+        ? `Cannot reach the API at ${API_URL}. Start it with "npm run dev" in the code_mentor_server folder, then try again.`
+        : 'Cannot reach the Code Mentor server. Check your internet connection and try again.',
+    )
   }
 
   const data = (await response.json().catch(() => null)) as { error?: string } | null

@@ -49,6 +49,15 @@
     outline-offset: 2px;
   }
 
+  /* Beginners must see exactly what they type: "<=" stays two characters, not a "≤" ligature. */
+  code,
+  pre,
+  textarea,
+  .font-mono {
+    font-variant-ligatures: none;
+    font-feature-settings: "liga" 0, "calt" 0;
+  }
+
   button {
     cursor: pointer;
   }

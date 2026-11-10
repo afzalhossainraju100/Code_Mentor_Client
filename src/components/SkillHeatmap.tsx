@@ -31,7 +31,7 @@ export function SkillHeatmap({ rows }: { rows: AnalyticsData['skillHeatmap'] }) 
                   title={cell.attempts ? `${cell.passed}/${cell.attempts} submissions passed` : 'No attempts yet'}
                 >
                   {cell.successRate === null ? '—' : `${cell.successRate}%`}
-                  <span className="block text-[10px] font-normal opacity-70">{cell.attempts ? `${cell.attempts} tries` : 'untried'}</span>
+                  <span className="block text-[10px] font-normal opacity-70">{cell.attempts ? `${cell.attempts} ${cell.attempts === 1 ? 'try' : 'tries'}` : 'untried'}</span>
                 </td>
               ))}
             </tr>

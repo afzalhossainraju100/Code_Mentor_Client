@@ -49,7 +49,7 @@ export function DashboardPage() {
         }
       />
 
-      <div className="grid grid-cols-1 gap-6 xl:grid-cols-[1.3fr_1fr]">
+      <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-[1.3fr_1fr]">
         <SkillProfileCard profile={profile} insight={data.insight} />
 
         <div className="space-y-6">

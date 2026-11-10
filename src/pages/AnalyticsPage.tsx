@@ -54,7 +54,7 @@ export function AnalyticsPage() {
         <StatCard label="Streak" value={`${stats.currentStreak}d`} icon={<LuFlame />} hint={`Longest streak: ${stats.longestStreak} days`} />
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_1.3fr]">
+      <div className="mt-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-[1fr_1.3fr]">
         <section className="card p-5" aria-labelledby="dna-title">
           <h2 id="dna-title" className="mb-5 flex items-center gap-2 font-bold text-ink-100"><LuDna className="text-brand-300" aria-hidden="true" /> Learning DNA</h2>
           <DnaTraits traits={data.dna} />

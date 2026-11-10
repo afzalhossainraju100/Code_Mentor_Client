@@ -20,14 +20,14 @@ export function ActivityHeatmap({ activity }: { activity: AnalyticsData['activit
       <div
         role="img"
         aria-label={`${total} submissions on ${activeDays} days in the last 12 weeks`}
-        className="grid grid-flow-col grid-rows-7 gap-1 overflow-x-auto pb-1"
-        style={{ gridAutoColumns: 'minmax(10px, 1fr)' }}
+        className="grid w-fit max-w-full grid-flow-col grid-rows-7 gap-1 overflow-x-auto pb-1"
+        style={{ gridAutoColumns: '18px', gridTemplateRows: 'repeat(7, 18px)' }}
       >
         {cells.map((day, index) =>
           day ? (
             <span
               key={day.date}
-              className={`aspect-square rounded-[3px] ${cellColor(day.attempts)}`}
+              className={`rounded-[4px] ${cellColor(day.attempts)}`}
               title={`${new Date(`${day.date}T00:00:00`).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}: ${day.attempts} submission${day.attempts === 1 ? '' : 's'}, ${day.solved} passed`}
             />
           ) : (

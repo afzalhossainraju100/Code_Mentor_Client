@@ -1,19 +1,118 @@
 @import "tailwindcss";
 
-:root {
-  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
-  color: #e2e8f0;
-  background: #020617;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
+/* ── Design tokens ─────────────────────────────────────────────────────────
+   ink-*   = neutral surfaces and text (dark theme)
+   brand-* = Code Mentor violet accent
+   Use them as Tailwind classes: bg-ink-900, text-brand-300, border-ink-700 … */
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Consolas, monospace;
+
+  --color-ink-950: #08090f;
+  --color-ink-900: #0d0e17;
+  --color-ink-850: #11131d;
+  --color-ink-800: #171925;
+  --color-ink-700: #222435;
+  --color-ink-600: #2e3146;
+  --color-ink-500: #4a4e69;
+  --color-ink-400: #7d819c;
+  --color-ink-300: #a5a9c1;
+  --color-ink-200: #d0d3e4;
+  --color-ink-100: #eef0f8;
+
+  --color-brand-200: #ddd6ff;
+  --color-brand-300: #c4b8ff;
+  --color-brand-400: #a897ff;
+  --color-brand-500: #8b78f6;
+  --color-brand-600: #6e5ae6;
+  --color-brand-700: #5643c4;
 }
 
-body {
-  margin: 0;
-  min-width: 320px;
+@layer base {
+  html {
+    color-scheme: dark;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    @apply min-h-screen bg-ink-950 font-sans text-ink-200;
+    min-width: 320px;
+  }
+
+  ::selection {
+    background: rgb(139 120 246 / 0.35);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand-400);
+    outline-offset: 2px;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  button:disabled {
+    cursor: not-allowed;
+  }
 }
 
-* {
-  box-sizing: border-box;
+/* Base button. Registered as a utility so the variants below can @apply it. */
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition-colors duration-150 disabled:opacity-55;
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border border-ink-700 bg-ink-900/80;
+  }
+
+  .btn-primary {
+    @apply btn bg-brand-400 text-ink-950 hover:bg-brand-300;
+  }
+
+  .btn-secondary {
+    @apply btn border border-ink-600 bg-ink-800 text-ink-100 hover:border-ink-500 hover:bg-ink-700;
+  }
+
+  .btn-ghost {
+    @apply btn text-ink-300 hover:bg-ink-800 hover:text-ink-100;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-ink-600 bg-ink-850 px-4 py-3 text-ink-100 placeholder:text-ink-500 transition-colors focus:border-brand-400 focus:outline-none;
+  }
+
+  .label {
+    @apply mb-2 block text-sm font-medium text-ink-200;
+  }
+
+  .eyebrow {
+    @apply text-[11px] font-bold tracking-[0.16em] text-brand-300 uppercase;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full border border-ink-600 bg-ink-800 px-2.5 py-1 text-xs font-medium text-ink-300;
+  }
+}
+
+/* ── Syntax colours for the code editor and visualizer ─────────────────── */
+.tok-keyword { color: #c4a5ff; }
+.tok-string { color: #a6e3a1; }
+.tok-number { color: #fab387; }
+.tok-comment { color: #6c7086; font-style: italic; }
+.tok-boolean { color: #fab387; }
+.tok-function { color: #89b4fa; }
+.tok-operator { color: #94e2d5; }
+.tok-punct { color: #9399b2; }
+
+.code-scroll::-webkit-scrollbar { height: 8px; width: 8px; }
+.code-scroll::-webkit-scrollbar-thumb { background: var(--color-ink-600); border-radius: 8px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

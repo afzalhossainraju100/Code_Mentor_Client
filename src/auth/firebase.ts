@@ -1,8 +1,10 @@
 import { getAnalytics, isSupported } from 'firebase/analytics'
-import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
-import { getStorage } from 'firebase/storage'
 import { initializeApp } from 'firebase/app'
+import { getAuth } from 'firebase/auth'
+
+// Firebase handles authentication only. Learner data lives in MongoDB via the Code Mentor API.
+// These web config values are public by design; protect the project with Firebase
+// authorized domains and API key restrictions in the Google Cloud console.
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -14,17 +16,30 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 }
 
-const hasFirebaseConfig = Boolean(firebaseConfig.apiKey && firebaseConfig.projectId)
+const requiredAuthConfig = {
+  VITE_FIREBASE_API_KEY: firebaseConfig.apiKey,
+  VITE_FIREBASE_AUTH_DOMAIN: firebaseConfig.authDomain,
+  VITE_FIREBASE_PROJECT_ID: firebaseConfig.projectId,
+  VITE_FIREBASE_APP_ID: firebaseConfig.appId,
+}
 
-export const firebaseApp = hasFirebaseConfig ? initializeApp(firebaseConfig) : null
+export const missingFirebaseConfig = Object.entries(requiredAuthConfig)
+  .filter(([, value]) => !value)
+  .map(([name]) => name)
+
+export const firebaseApp = missingFirebaseConfig.length === 0 ? initializeApp(firebaseConfig) : null
 export const auth = firebaseApp ? getAuth(firebaseApp) : null
-export const db = firebaseApp ? getFirestore(firebaseApp) : null
-export const storage = firebaseApp ? getStorage(firebaseApp) : null
+
+export function firebaseConfigError() {
+  return missingFirebaseConfig.length
+    ? `Firebase is not configured. Add these values to the client .env file: ${missingFirebaseConfig.join(', ')}.`
+    : 'Firebase Authentication could not be initialized. Check the client Firebase configuration.'
+}
 
 if (firebaseApp && firebaseConfig.measurementId) {
-  void isSupported().then((supported) => {
-    if (supported) {
-      getAnalytics(firebaseApp)
-    }
-  })
+  void isSupported()
+    .then((supported) => {
+      if (supported) getAnalytics(firebaseApp)
+    })
+    .catch(() => {})
 }

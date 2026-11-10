@@ -1,79 +1,125 @@
-# Coding Pro Roadmap
+# Code Mentor delivery roadmap
 
-Coding Pro is a Socratic coding-learning platform. Its core promise is to help a learner understand *why* code fails instead of silently rewriting it for them.
+## Product goal
 
-## Product principles
+Help beginner programmers learn to debug by working through buggy code, receiving progressively clearer clues, and demonstrating that they understood the underlying concept. The platform should preserve learner agency: it should not silently replace a learner's work with a complete answer.
 
-1. **Guide, do not solve:** AI asks targeted questions and gives hints in increasing levels of specificity.
-2. **Preserve learner agency:** The learner edits and resubmits their own code.
-3. **Explain the reasoning:** Every diagnostic connects the error to a concept and a reproducible debugging step.
-4. **Measure learning:** Progress tracks concepts mastered and debugging attempts, not only completed exercises.
-5. **Protect secrets:** Firebase browser configuration is loaded from environment variables; MongoDB credentials and AI provider keys remain on a server.
+## Delivery order
 
-## Ordered delivery plan
+### 0. Safe project foundation — current
 
-### Phase 1 — Foundation (current)
+- Separate client and server configuration with `.env.example` templates.
+- Keep real credentials local; publish templates, never live secret values.
+- Basic server limits, explicit CORS origins, safe error responses, and API input validation.
+- Ship a simple challenge with deterministic checks and an offline fallback.
 
-- React + TypeScript + Vite application.
-- Tailwind CSS for responsive styling.
-- React Router for page navigation.
-- React Icons and Motion for interface polish and feedback animations.
-- Firebase client module ready for Auth, Firestore, and Storage once project values are supplied.
-- Environment template separating public Firebase values from server-only MongoDB credentials.
-- Initial landing page, workspace route, and roadmap route.
+### 1. Core learner journey
 
-### Phase 2 — Authentication and learner profile
+- Learner profile and onboarding: experience, preferred language, daily goal, and accessibility needs.
+- Challenge catalog with topic, language, difficulty, and estimated time filters.
+- Code editor with save/reset, clear prompt, sample input/output, and submit controls.
+- Submission history and transparent pass/fail feedback.
+- First fully supported language and small reviewed exercise set.
 
-- Connect Firebase project configuration.
-- Add email/password and Google sign-in.
-- Add protected routes and session persistence.
-- Create learner profile and onboarding goals in Firestore.
-- Add Firestore security rules and emulator-based tests.
+### 2. Reliable code verification
 
-### Phase 3 — Learning content
+- Run code only in an isolated execution service with CPU, memory, time, and network limits.
+- Evaluate visible and hidden test cases, boundary values, output format, and runtime errors.
+- Normalize compiler output to safe diagnostics; never return infrastructure details.
+- Add submission quotas, abuse protection, and audit logs before public launch.
 
-- Define exercise, language, difficulty, concept, test-case, and hint schemas.
-- Build exercise catalog with search and filtering.
-- Add exercise detail page with expected behavior, constraints, and examples.
-- Add progress, streak, and concept mastery views.
+### 3. Guided debugging loop
 
-### Phase 4 — Code workspace
+- Progressive hints: identify the area, ask a diagnostic question, explain the concept, then offer a next step.
+- Record hint usage, attempts, time to solve, and corrected misconception.
+- Give a short explanation after success and ask the learner to describe the fix.
+- Revisit the same concept using a different exercise to check transfer.
 
-- Add a syntax-highlighted editor (Monaco or CodeMirror) with starter code and reset.
-- Add language-aware execution through a sandboxed backend service.
-- Normalize compiler/runtime output into safe, structured diagnostics.
-- Show stdout, stderr, test failures, and execution limits without exposing server internals.
-- Save drafts and submissions with debounced persistence.
+### 4. Weakness profile and progress analytics
 
-### Phase 5 — Socratic AI (load-bearing capability)
+- Derive topic strengths from test outcomes, repeated error types, hint dependence, and retry patterns.
+- Show evidence and confidence with each skill estimate; avoid presenting estimates as facts.
+- Add daily activity, attempts, success rate, solving time, and topic improvement views.
+- Let learners review, export, or delete their learning history.
 
-- Create a backend AI orchestration service; never call the AI provider directly from the browser.
-- Send only the exercise context, learner code, diagnostics, previous attempts, and conversation state.
-- Define a response schema: observation, question, hint level, next action, and concept reference.
-- Add a policy prompt that forbids returning a complete corrected solution by default.
-- Implement progressive hints: clarify the goal, point to a relevant region, ask for a hypothesis, then explain the concept after learner effort.
-- Detect repeated failed attempts and offer a small, explicit next step instead of dumping an answer.
-- Log model latency, token usage, feedback quality, and learner outcomes without storing unnecessary personal data.
+### 5. Personalized bug challenges and recovery plans
 
-### Phase 6 — Persistence and analytics
+- Select a buggy snippet by current skill, topic weakness, and recent performance.
+- Adjust difficulty gradually and explain why a challenge was selected.
+- Build a short daily recovery plan from weak concepts, then update it from new evidence.
+- Keep deterministic selection rules as the fallback if AI is unavailable.
 
-- Use Firestore for identity, exercises, progress, and lightweight conversation metadata.
-- Use MongoDB from the backend for detailed submissions, diagnostic traces, and analytics where flexible documents are useful.
-- Add retention rules, indexes, pagination, and export/delete account flows.
-- Add an admin view for exercise authoring and reviewing AI feedback quality.
+### 6. AI mentor integration
 
-### Phase 7 — Quality and launch
+- Add a server-side AI adapter only after the deterministic experience is useful.
+- Validate structured model output and reject full-solution responses by default.
+- Send only the exercise, learner code, test results, and minimum necessary history.
+- Add timeouts, retries, cost limits, privacy controls, monitoring, and deterministic fallback.
+- Measure whether AI hints improve independent transfer, not just completion.
 
-- Unit test diagnostics, hint policy, progress calculations, and access rules.
-- Add integration tests for sign-in, submission, AI response validation, and persistence.
-- Add rate limits, abuse protection, content safety, and cost controls.
-- Add error monitoring, structured logs, performance budgets, and accessibility checks.
-- Deploy the frontend and backend separately with environment-specific configuration.
+### 7. Visual execution analyzer
 
-## Immediate next steps
+- Start with an AST-based trace for a deliberately limited language subset.
+- Show line-by-line state changes, variable values, and loop iterations.
+- Use safe instrumentation or a sandbox; never execute learner code in the web server process.
+- Add AI-generated explanations only as an optional layer over verified execution traces.
 
-1. Supply Firebase web configuration and create `.env.local` from `.env.example`.
-2. Decide the first supported language (JavaScript is the fastest MVP path).
-3. Choose the code execution sandbox and AI provider.
-4. Create the backend service before connecting MongoDB credentials or AI keys.
-5. Implement one complete vertical slice: one exercise, one submission, one diagnostic, and one Socratic hint.
+### 8. Admin and launch readiness
+
+- Admin exercise authoring, review, versioning, and retirement workflow.
+- Role-based access, Firebase rules, retention controls, backups, and account deletion.
+- Accessibility review, privacy review, monitoring, incident response, and deployment checklist.
+- Expand languages only after the current language's runner and exercise content are reliable.
+
+## User and stakeholder workflows
+
+### Learner
+
+1. Visits the workspace and tries the sample challenge; sign-in is optional for the local demo.
+2. Chooses a challenge by topic and difficulty.
+3. Reads the expected behavior and edits the code.
+4. Submits; the verification service runs checks and returns normalized results.
+5. If stuck, requests the next hint. Each hint is more specific and the usage is recorded.
+6. Fixes the code, reviews why it worked, then completes a different challenge on the same concept.
+7. Reviews skill progress and the evidence behind each weak-topic recommendation.
+
+### Mentor or instructor
+
+1. Selects a cohort or learner whose progress they are allowed to view.
+2. Reviews topic-level trends, repeated misconceptions, and hint dependence rather than raw private code by default.
+3. Assigns reviewed challenges or a recovery plan.
+4. Uses learner-visible evidence to coach; does not treat automated skill estimates as a grade.
+
+### Content author / administrator
+
+1. Drafts an exercise with concept, difficulty, starter code, expected behavior, tests, and hint ladder.
+2. Runs validation and reviews the solution and edge cases.
+3. Publishes a version; retires or replaces it without corrupting old submission history.
+4. Reviews anonymous quality signals and AI feedback failures, with access logged.
+
+### System / AI service
+
+1. Authenticates the learner and checks request size, rate, and access.
+2. Runs code in the isolated runner and produces structured diagnostics.
+3. Tries the configured AI provider for a bounded, schema-validated hint when enabled.
+4. Uses deterministic hint logic on missing key, timeout, provider error, invalid output, or quota exhaustion.
+5. Stores only necessary progress and operational metadata under retention rules.
+
+## AI key needed later
+
+For natural-language debugging hints, the recommended first integration is an OpenAI API key used by the server only. It is different from ChatGPT Plus and API usage is billed separately. Follow these steps when you are ready:
+
+1. Sign in at [OpenAI API Platform](https://platform.openai.com/).
+2. Open Billing and add a payment method or API credits if the account requires it. ChatGPT Plus does not pay for API calls.
+3. Create or select a project for Code Mentor, then open that project's API Keys page.
+4. Choose **Create new secret key**, copy it once, and store it safely. OpenAI does not show the full key again; create a replacement if it is lost. See the [official API key instructions](https://help.openai.com/en/articles/4936850-where-do-i-find-my-openai-api-key) and [project guide](https://help.openai.com/en/articles/9186755-managing-projects-in-the-api-platform).
+5. Put it only in `code_mentor_server/.env` as `OPENAI_API_KEY=...`. Do not paste it into chat, commit it, or use a `VITE_` variable.
+6. Share only that the key is ready. We can wire the provider and select the model then; no key is needed for the deterministic MVP.
+
+## Configuration and repository safety
+
+- `.env.example` is the shareable template. `.env` contains local values and must stay out of commits.
+- Firebase browser config is public configuration and must be protected with Firebase domain restrictions and security rules.
+- Firebase Admin credentials, database URI, and AI API keys are private server secrets.
+- Making a GitHub repository private does not remove credentials from its history or prevent collaborators from copying them. If a real secret was pushed, revoke and rotate it.
+- Keep the client and server deploy origins separate and configure production values outside source control.

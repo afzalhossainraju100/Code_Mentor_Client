@@ -1,34 +1,81 @@
-import { signOut } from 'firebase/auth'
-import { Link } from 'react-router-dom'
-import { auth } from '../auth/firebase'
+import { useState } from 'react'
+import { LuArrowRight, LuMenu, LuX } from 'react-icons/lu'
+import { Link, NavLink } from 'react-router-dom'
 import { useUser } from '../auth/useUser'
+import { Logo } from './Logo'
+import { UserAvatar } from './UserAvatar'
 
+const sectionLinks = [
+  { href: '/#features', label: 'Features' },
+  { href: '/#how-it-works', label: 'How it works' },
+  { href: '/#profile-demo', label: 'Skill profile' },
+]
+
+/** Public top navigation (landing page and 404). */
 export function Navigation() {
   const { user } = useUser()
-
-  async function handleSignOut() {
-    if (auth) {
-      await signOut(auth)
-    }
-  }
+  const [open, setOpen] = useState(false)
 
   return (
-    <header className="border-b border-slate-800 bg-slate-950/90">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-        <Link to="/" className="text-xl font-black text-white">Code Mentor</Link>
-        <div className="flex items-center gap-5 text-sm text-slate-300">
+    <header className="sticky top-0 z-40 border-b border-ink-800/80 bg-ink-950/80 backdrop-blur-xl">
+      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6" aria-label="Main">
+        <Logo />
+
+        <div className="hidden items-center gap-1 md:flex">
+          {sectionLinks.map((link) => (
+            <a key={link.href} href={link.href} className="rounded-lg px-3 py-2 text-sm text-ink-300 hover:text-ink-100">
+              {link.label}
+            </a>
+          ))}
+        </div>
+
+        <div className="hidden items-center gap-2 md:flex">
           {user ? (
-            <button type="button" onClick={handleSignOut} className="rounded-lg border border-slate-700 px-4 py-2 hover:border-cyan-300 hover:text-cyan-300">
-              Sign out
-            </button>
+            <>
+              <UserAvatar size="sm" />
+              <Link to="/dashboard" className="btn-primary">
+                Dashboard <LuArrowRight aria-hidden="true" />
+              </Link>
+            </>
           ) : (
             <>
-              <Link to="/login" className="hover:text-cyan-300">Log in</Link>
-              <Link to="/signup" className="rounded-lg bg-cyan-300 px-4 py-2 font-bold text-slate-950 hover:bg-cyan-200">Sign up</Link>
+              <NavLink to="/login" className="btn-ghost">Log in</NavLink>
+              <Link to="/signup" className="btn-primary">Start free</Link>
             </>
           )}
         </div>
+
+        <button
+          type="button"
+          className="btn-ghost px-2.5 md:hidden"
+          aria-expanded={open}
+          aria-controls="mobile-menu"
+          aria-label={open ? 'Close menu' : 'Open menu'}
+          onClick={() => setOpen((value) => !value)}
+        >
+          {open ? <LuX size={20} /> : <LuMenu size={20} />}
+        </button>
       </nav>
+
+      {open && (
+        <div id="mobile-menu" className="border-t border-ink-800 px-4 pb-5 md:hidden">
+          <div className="flex flex-col py-2">
+            {sectionLinks.map((link) => (
+              <a key={link.href} href={link.href} onClick={() => setOpen(false)} className="rounded-lg px-2 py-3 text-ink-200">
+                {link.label}
+              </a>
+            ))}
+          </div>
+          {user ? (
+            <Link to="/dashboard" className="btn-primary w-full" onClick={() => setOpen(false)}>Go to dashboard</Link>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <Link to="/login" className="btn-secondary" onClick={() => setOpen(false)}>Log in</Link>
+              <Link to="/signup" className="btn-primary" onClick={() => setOpen(false)}>Start free</Link>
+            </div>
+          )}
+        </div>
+      )}
     </header>
   )
 }
